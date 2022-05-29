@@ -1,66 +1,13 @@
 import pandas as pd
 import numpy as np
-from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
 import pickle
 import os
 
 
-def clean_df(df):
-    '''
-
-    :param df:
-    :return: removes non english books, fills missing Summaries and removes other weridness from Summary colm
-    '''
-    df = df.loc[df['Language'] == 'en']
-    df.drop(['Unnamed: 0', 'user_id', 'location', 'age', 'isbn', 'rating', 'Language', 'Category', 'city', 'state',
-             'country'], axis=1, inplace=True)
-    df = df.drop_duplicates(subset=['book_title'])
-    temp = df.loc[df['Summary'] == '9', 'Summary'] = df['book_title']
-    df['Summary'] = df['Summary'].replace('\n', ' ', regex=True)
-    df['Summary'] = df['Summary'].replace('&#39;', '\'', regex=True)
-    df['Summary'] = df['Summary'].replace('&quot;', '', regex=True)
-    df = df[df['Summary'].map(lambda x: x.isascii())]
-    df = df[df['book_title'].map(lambda x: x.isascii())]
-    df = df[df['book_author'].map(lambda x: x.isascii())]
-    return df
 
 
-def make_lower_case(text):
-    '''
 
-    :param text:
-    :return: makes lower case
-    '''
-    assert isinstance(text, str)
-    return text.lower()
-
-
-def remove_stop_words(text):
-    '''
-
-    :param text:
-    :return: removing stop words
-    '''
-    assert isinstance(text, str)
-    text = text.split()
-    stops = set(stopwords.words("english"))
-    text = [w for w in text if not w in stops]
-    text = " ".join(text)
-    return text
-
-
-def remove_punctuation(text):
-    '''
-
-    :param text:
-    :return: removing punctuation
-    '''
-    assert isinstance(text, str)
-    tokenizer = RegexpTokenizer(r'\w+')
-    text = tokenizer.tokenize(text)
-    text = " ".join(text)
-    return text
 
 
 def get_tfidf_vectors(df):
@@ -76,17 +23,19 @@ def get_tfidf_vectors(df):
         return tfidf_vectors
 
 
-
-def recommendations(book_title, tfidf_vectors):
+#df must have droped duplicates
+def recommendations(book_title_index, tfidf_vectors):
     '''
 
     :param book_title:
     :param tfidf_vectors:
     :param df:
-    :return: index of most similar books on df
+    :return: index of most similar books on df must have droped duplicates
+    !!!df = df.drop_duplicates(subset=['book_title'])!!!
     '''
     n=5
-    index = df.loc[df['book_title'] == book_title].index[0]
+    #index = df.loc[df['book_title'] == book_title].index[0]
+    index = book_title_index
     # Perform cosine similarity book_title vs all other items in dataset
     cosine_similarities = cosine_similarity(tfidf_vectors, tfidf_vectors[index].reshape(1, -1))
     # sorting scores
@@ -104,6 +53,7 @@ def recommendations(book_title, tfidf_vectors):
 
 
 df = pd.read_csv('Preprocessed_data.csv')
-df = clean_df(df)
+df = df.drop_duplicates(subset=['book_title'])
+#df = clean_df(df)
 tfidf_vectors = get_tfidf_vectors(df)
-print(recommendations("Holes", tfidf_vectors))
+print(recommendations(df.loc[df['book_title'] == 'Holes'].index[0], tfidf_vectors))
