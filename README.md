@@ -5,8 +5,8 @@ Start deployment flask app to 8080: python3 app.py <br>
 Access the webapp: http://ip_address:8080/ or ece229.ddns.net
 
 ## Known Frontend Errors
-1.Auth for the search part(Fixed)
-2.UI issue when switching tabs(Fixed)
-3.Click on Readmore leads stuck on one papge
+1.Auth for the search part(Fixed)<br>
+2.UI issue when switching tabs(Fixed)<br>
+3.Click on Readmore leads stuck on one papge<br>
 
 
