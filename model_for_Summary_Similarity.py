@@ -14,7 +14,7 @@ import string
 import random
 import pickle
 import os
-
+import json
 
 def clean_df(df):
     '''
@@ -30,9 +30,11 @@ def clean_df(df):
     df['Summary'] = df['Summary'].replace('\n', ' ', regex=True)
     df['Summary'] = df['Summary'].replace('&#39;', '\'', regex=True)
     df['Summary'] = df['Summary'].replace('&quot;', '', regex=True)
-    df = df[df['Summary'].map(lambda x: x.isascii())]
-    df = df[df['book_title'].map(lambda x: x.isascii())]
-    df = df[df['book_author'].map(lambda x: x.isascii())]
+
+    #df = df[df['Summary'].map(lambda x: x.isascii())]
+    #df = df[df['book_title'].map(lambda x: x.isascii())]
+    #df = df[df['book_author'].map(lambda x: x.isascii())]
+    #df.to_csv('file2.csv', header=True, index=True)
     return df
 
 
@@ -71,9 +73,21 @@ def remove_punctuation(text):
     text = tokenizer.tokenize(text)
     text = " ".join(text)
     return text
+class NumpyEncoder(json.JSONEncoder):
+    """ Special json encoder for numpy types """
+    def default(self, obj):
+        if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
+                            np.int16, np.int32, np.int64, np.uint8,
+                            np.uint16, np.uint32, np.uint64)):
+            return int(obj)
+        elif isinstance(obj, (np.float_, np.float16, np.float32,
+                              np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
-
-def get_tfidf_vectors(df):
+def get_tfidf_vectors():
     '''
 
     :param df:
@@ -81,6 +95,8 @@ def get_tfidf_vectors(df):
     '''
     tfidf_vectors = []
     if os.path.isfile("NLPwords.txt"):  # if file exists we have already generated a list just load
+        #with open("NLPwords.json", 'r', encoding="utf-8") as f:
+        #    tfidf_vectors = json.load(f)
         with open("NLPwords.txt", 'rb') as f:
             tfidf_vectors = pickle.load(f)
         return tfidf_vectors
@@ -94,7 +110,7 @@ def get_tfidf_vectors(df):
         for words in title['Summary']:
             corpus.append(words.split())
 
-        import gensim.downloader as api
+
 
         # Replace with your file loc
         # EMBEDDING_FILE = 'C:/Users/Gordon/gensim-data/word2vec-google-news-300/word2vec-google-news-300.gz'
@@ -103,7 +119,7 @@ def get_tfidf_vectors(df):
         # Training our corpus with Google Pretrained Model
 
         # 100 to 400 based on runtime
-        google_model = Word2Vec(vector_size=200, window=5, min_count=2, workers=-1)
+        google_model = Word2Vec(vector_size=100, window=5, min_count=2, workers=-1)
         google_model.build_vocab(corpus)
 
         google_model.train(corpus, total_examples=google_model.corpus_count, epochs=5)
@@ -117,7 +133,7 @@ def get_tfidf_vectors(df):
         # for each book description
         for desc in corpus:
             # Word vectors are of zero length
-            sent_vec = np.zeros(200)
+            sent_vec = np.zeros(100)
             # num of words with a valid vector in the book description
             weight_sum = 0
             # for each word in the book description
@@ -130,23 +146,31 @@ def get_tfidf_vectors(df):
             if weight_sum != 0:
                 sent_vec /= weight_sum
             tfidf_vectors.append(sent_vec)
+
             line += 1
         with open('NLPwords.txt', 'wb') as f:
             pickle.dump(tfidf_vectors, f)
+        #with open('NLPwords.json', 'w', encoding="utf-8") as f:
+        #    f.write(json.dumps(tfidf_vectors,cls=NumpyEncoder))
+
         return tfidf_vectors
 
-
-def recommendations(book_title, tfidf_vectors):
+#df must have droped duplicates
+def recommendations(book_title_index, tfidf_vectors):
     '''
 
     :param book_title:
     :param tfidf_vectors:
     :param df:
-    :return: index of most similar books on df
+    :return: index of most similar books on df must have droped duplicates
+    !!!df = df.drop_duplicates(subset=['book_title'])!!!
     '''
     n=5
-    index = df.loc[df['book_title'] == book_title].index[0]
+    #index = df.loc[df['book_title'] == book_title].index[0]
+    index = book_title_index
+    print(index)
     # Perform cosine similarity book_title vs all other items in dataset
+    hold=tfidf_vectors[index]
     cosine_similarities = cosine_similarity(tfidf_vectors, tfidf_vectors[index].reshape(1, -1))
     # sorting scores
     sim_scores = list(enumerate(cosine_similarities))
@@ -162,7 +186,38 @@ def recommendations(book_title, tfidf_vectors):
     return book_indices
 
 
+
+
+
 df = pd.read_csv('Preprocessed_data.csv')
 df = clean_df(df)
-tfidf_vectors = get_tfidf_vectors(df)
-print(recommendations("Holes", tfidf_vectors))
+print(df.nunique())
+hold1=df.loc[df['book_title'] == 'Fahrenheit 451']
+hold2=df.loc[df['book_title'] == 'Of Mice and Men']
+hold3=df.loc[df['book_title'] == 'The Great Gatsby']
+hold4=df.loc[df['book_title'] == 'The Grapes of Wrath']
+tfidf_vectors = get_tfidf_vectors()
+
+#temp = pd.DataFrame(tfidf_vectors)
+
+#np.ndarray(shape=(),tfidf_vectors)
+hold = recommendations(df.loc[df['book_title'] == 'Holes'].index[0], tfidf_vectors)
+
+
+import csv
+def get_book_title(book_indices):
+    title=[]
+    for i in book_indices:
+        title.append(df.iloc[i] )
+    return title
+
+import csv
+with open('index_to_title.csv','w',encoding='utf-8', newline="") as f:
+    write = csv.writer(f)
+    index = df.index
+    i=0
+    for book in df['book_title']:
+        write.writerow([book, str(index[i])])
+        i+=1
+
+
