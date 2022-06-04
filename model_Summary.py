@@ -70,7 +70,7 @@ if __name__ == "__main __":
     import pickle
     import pandas as pd
     # changed NLPwords_final.txt to NLPwords.txt
-    with open("NLPwords_final.txt", 'rb') as f:
+    with open("NLPwords.txt", 'rb') as f:
         tfidf_vectors = pickle.load(f)
     # changed Preprocessed_data1.csv to index_to_title.csv
     df = pd.read_csv('index_to_title.csv')
