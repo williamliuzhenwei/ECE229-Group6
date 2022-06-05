@@ -21,6 +21,9 @@ def recommendations(book_title, tfidf_vectors):
     :param df:
     :return: index of most similar books on df
     '''
+    assert type(book_title) == str
+    assert type(tfidf_vectors) == list
+    
     n=5
     index = df.iloc[df.loc[df['book_title'] == book_title].index[0],0]
     print(index) 
