@@ -33,6 +33,9 @@ def recommendations(df: Any,
     Returns: 
         list of Index of N most similar books with the first item being the most similar on df or none if we cant find any books
     '''
+    assert type(tfidf_vectors) == list
+    assert type(book_title) == str
+    
     n = 5
     index = df.iloc[df.loc[df['book_title'] == book_title].index[0], 0]
     # Perform cosine similarity book_title vs all other items in dataset
@@ -67,6 +70,7 @@ def get_book_title(df: Any,
     Returns: two lists. one that contains book title, another contains a link to a picture of the book
         
     '''
+    assert type(book_indices) == list
     
     titles = []
     imgs = []
