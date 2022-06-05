@@ -1,7 +1,10 @@
 '''
 Description
     Finds similar books using NLPwords.txt and index_to_title.csv generated from model_Summary_preprocessing
-    and returns their title
+    and returns their title.
+    This is the code that is runing on AWS so code is fast and light.
+    
+    
 '''
 
 from typing import Any
@@ -15,15 +18,19 @@ def recommendations(df: Any,
                     book_title: str):
     '''
 
-    Description using cosine similarity finds N most similar books and returns their index as a list
+    Description 
+        Using cosine similarity finds N most similar books and returns their index as a list.
+        Functions by geting the tfidf_vector at index of booktitle.
+        Then we preform cosine similarity every tfidf_vector agaist our selected vector.
+        Finally we pick the top N get the index and return it.
 
     Args:
         book_title: a book title must match exactly with book title in df
-        tfidf_vectors: 2D list of floats that represent weight of each book vs each other from NLPwords.txt
+        tfidf_vectors: 2D list of floats that represent weight of each book vs each other from NLPwords.txt all values between 0 and 1
         df: Input a dataframe from index_to_title.csv
     
     Returns: 
-        list of Index of N most similar books on df
+        list of Index of N most similar books with the first item being the most similar on df or none if we cant find any books
     '''
     n = 5
     index = df.iloc[df.loc[df['book_title'] == book_title].index[0], 0]
@@ -45,7 +52,11 @@ def get_book_title(df: Any,
                    book_indices: list):
     '''
 
-    Description retrieves book title and picture based on book index
+    Description 
+        Retrieves book title and picture based on book index.
+        Since the index returned from recommendations does not line up with main dataset
+        we use our lookup table "index_to_title.csv" to convert the index for the main dataset.
+        Then we can just select the row and get title and image.
 
 
     Args:
