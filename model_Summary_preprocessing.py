@@ -18,13 +18,20 @@ import json
 import csv
 '''
 Description
-    Preforms all the preprocessing for our cosine Summary model and saves it into two files index_to_title.csv & NLPwords.txt
+    Functions to preform all the preprocessing for our book recommandtion via book summary.
+    Also saves the model and lookup table into two files index_to_title.csv & NLPwords.txt.
+    NLPwords.txt contains the vectors of the model.
+    index_to_title.csv is the lookup table.
+    
+    run clean_df - > get_tfidf_vectors -> index_to_title_generation
+    user must provide the intial dataset
+    
 '''
 
 def clean_df(df):
     '''
     Description
-        removes non english books, fills missing Summaries with book title and removes other weirdness from df
+        removes non english books, fills missing Summaries with book title, removes duplicate books titles from df
 
     Args: df our base dataset
     Returns: df
@@ -101,7 +108,7 @@ def get_tfidf_vectors(df):
         corpus = []
         for words in title['Summary']:
             corpus.append(words.split())
-        # Training our corpus with Google Pretrained Model
+        # Training our corpus with words to vec
 
         google_model = Word2Vec(vector_size=100, window=5, min_count=2, workers=-1)
         google_model.build_vocab(corpus)
