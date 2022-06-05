@@ -47,6 +47,7 @@ def recommendations(book_title, tfidf_vectors):
 
 def get_book_title(user_input):
     book_indices = recommendations(user_input, tfidf_vectors)
+    assert type(book_indices) == list
     titles = []
     imgs = []
     for i in book_indices:
