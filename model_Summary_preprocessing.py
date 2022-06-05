@@ -55,6 +55,8 @@ def make_lower_case(text: str):
     Args: text
     Returns: text
     '''
+    assert type(text) == str
+    
     return text.lower()
 
 
@@ -66,6 +68,8 @@ def remove_stop_words(text: str):
     Args: text
     Returns: text
     '''
+    assert type(text) == str
+    
     text = text.split()
     stops = set(stopwords.words("english"))
     text = [w for w in text if not w in stops]
@@ -81,6 +85,8 @@ def remove_punctuation(text: str):
     Args: text
     Returns: text
     '''
+    assert type(text) == str
+    
     tokenizer = RegexpTokenizer(r'\w+')
     text = tokenizer.tokenize(text)
     text = " ".join(text)
