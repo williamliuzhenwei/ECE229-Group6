@@ -1,9 +1,10 @@
 '''
 Description
+    Get the top N most similar books based on summary using cosine simmilarity.
     Finds similar books using NLPwords.txt and index_to_title.csv generated from model_Summary_preprocessing
-    and returns their title.
+    and returns their title and picture.
     This is the code that is runing on AWS so code is fast and light.
-    
+    Computation time for two functions under 1 secound
     
 '''
 
