@@ -16,7 +16,7 @@ import pandas as pd
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
-books = pd.read_csv(r'D:\ECE229\test-book\book-recommender\doc\datasets\Preprocessed_data1.csv')
+# books = pd.read_csv(r'D:\ECE229\test-book\book-recommender\doc\datasets\Preprocessed_data1.csv')
 # df = books.copy()
 
 app = Flask(__name__)
