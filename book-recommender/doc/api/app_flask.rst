@@ -7,9 +7,6 @@
 .. automodule:: book_recommender.app_flask
    :members:
 
-
-
-
 .. autosummary::
 
    verify_password
