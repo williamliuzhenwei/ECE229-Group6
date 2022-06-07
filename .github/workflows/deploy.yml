@@ -41,7 +41,7 @@ jobs:
       - name: 🔧 Build HTML
         run: |
           cd book-recommender
-          invoke doc --opts "-j 4"
+          invoke doc
 
       - name: 🚀 Deploy to GitHub pages
         uses: peaceiris/actions-gh-pages@v3
