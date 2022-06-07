@@ -33,7 +33,7 @@ df = books.copy()
 
 def item_based_recommender(book_title):
     
-    book_title = str(book_title)
+    assert type(book_title) == str
     if book_title in df['book_title'].values:
     
         rating_counts = pd.DataFrame(df['book_title'].value_counts())
@@ -80,7 +80,7 @@ def item_based_recommender(book_title):
 
 def content_based_recommender(book_title):
     
-    book_title = str(book_title)
+    assert type(book_title) == str
     if book_title in df['book_title'].values:
         rating_counts = pd.DataFrame(df['book_title'].value_counts())
         rare_books = rating_counts[rating_counts['book_title'] <= 100].index
@@ -136,7 +136,7 @@ def content_based_recommender(book_title):
 def custom_recommender(book_title):
     
     #ITEM-BASED
-    book_title = str(book_title)
+    assert type(book_title) == str
     if book_title in df['book_title'].values:
     
         rating_counts = pd.DataFrame(df['book_title'].value_counts())
