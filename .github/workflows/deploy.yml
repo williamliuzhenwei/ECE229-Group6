@@ -11,9 +11,9 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v2
-        with:
-          lfs: true
-          token: ${{ secrets.ACCESS_TOKEN }}
+        # with:
+        #   lfs: true
+        #   token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: 🐍 Set up Python 3.10
         uses: actions/setup-python@v2
