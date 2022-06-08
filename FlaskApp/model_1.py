@@ -34,6 +34,7 @@ def recommendations(df: Any,
     assert type(tfidf_vectors) == list
     assert type(book_title) == str
     assert len(book_title) == len(book_title.encode())
+    assert book_title != ''
     
     n = 5
     index = df.iloc[df.loc[df['book_title'] == book_title].index[0], 0]
