@@ -39,6 +39,7 @@ def item_based_recommender(df: Any, book_title: str):
     # test the book title is a string and contains only characters in the ascii table
     assert type(book_title) == str
     assert len(book_title) == len(book_title.encode())
+    assert book_title != ''
     
     if book_title in df['book_title'].values:
 
@@ -106,6 +107,7 @@ def content_based_recommender(df: Any, book_title: str):
     # test the book title is a string and contains only characters in the ascii table
     assert type(book_title) == str
     assert len(book_title) == len(book_title.encode())
+    assert book_title != ''
 
     if book_title in df['book_title'].values:
         rating_counts = pd.DataFrame(df['book_title'].value_counts())
@@ -180,6 +182,7 @@ def custom_recommender(df: Any, book_title: str):
     # test the book title is a string and contains only characters in the ascii table
     assert type(book_title) == str
     assert len(book_title) == len(book_title.encode())
+    assert book_title != ''
 
     if book_title in df['book_title'].values:
 
